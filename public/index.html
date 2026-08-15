@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawID & Care — Intelligent Community Dog Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-500/10 border border-amber-500/30 p-2 rounded-xl text-amber-400">
+                    <i class="fa-solid fa-paw text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight text-white">PawID & Care</h1>
+                    <p class="text-xs text-slate-400">DogID Biometrics, RabiesShield & Emergency Dispatch</p>
+                </div>
+            </div>
+            <div
+                class="flex items-center space-x-2 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-full font-medium">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Google AI & ElevenLabs Connected</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-6 py-10">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Left Column: Upload & Controls -->
+            <div class="md:col-span-1 space-y-6">
+                <div class="bg-slate-800/60 border border-slate-700/60 p-6 rounded-2xl shadow-xl backdrop-blur">
+                    <h2 class="text-base font-semibold text-white mb-4 flex items-center">
+                        <i class="fa-solid fa-camera-retro text-amber-400 mr-2"></i> Report / Scan Dog
+                    </h2>
+
+                    <div class="space-y-4">
+                        <!-- Dropzone / File Input Container -->
+                        <div
+                            class="border-2 border-dashed border-slate-700 hover:border-amber-500/50 transition rounded-xl p-4 text-center bg-slate-900/40 relative">
+                            <input type="file" id="dogImage" accept="image/*"
+                                class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                onchange="previewThumbnail(event)">
+                            <div id="uploadPrompt" class="space-y-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
+                                <p class="text-xs text-slate-300 font-medium">Click or drag photo here</p>
+                                <p class="text-[10px] text-slate-500">Supports JPG, PNG, WEBP</p>
+                            </div>
+                            <div id="imagePreviewContainer" class="hidden">
+                                <img id="imagePreview" class="max-h-40 mx-auto rounded-lg object-cover shadow">
+                                <p class="text-xs text-amber-400 mt-2 font-medium">Change photo</p>
+                            </div>
+                        </div>
+
+                        <button onclick="submitReport()" id="submitBtn"
+                            class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-amber-500/10 flex items-center justify-center space-x-2 text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <span>Run Biometric Analysis</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Info Card -->
+                <div
+                    class="bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 p-5 rounded-2xl text-xs space-y-2 text-slate-300">
+                    <p class="font-semibold text-amber-400 flex items-center"><i
+                            class="fa-solid fa-circle-info mr-1.5"></i> Hackathon Innovation</p>
+                    <p>Instantly maps individual street dogs, evaluates public health herd-immunity percentages, and
+                        coordinates local veterinary dispatch.</p>
+                </div>
+            </div>
+
+            <!-- Right Column: Analysis Results Dashboard -->
+            <div class="md:col-span-2 space-y-6">
+
+                <!-- Initial Empty State -->
+                <div id="emptyState"
+                    class="bg-slate-800/40 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-full min-h-[360px]">
+                    <div class="bg-slate-800 p-4 rounded-full text-slate-500 mb-4 text-xl shadow-inner">
+                        <i class="fa-solid fa-dog"></i>
+                    </div>
+                    <h3 class="text-slate-300 font-medium mb-1">No scan results yet</h3>
+                    <p class="text-xs text-slate-500 max-w-xs">Upload a photograph of a community dog or pet to trigger
+                        multimodal AI feature recognition and ID registry cross-referencing.</p>
+                </div>
+
+                <!-- Active Results Dashboard (Hidden by Default) -->
+                <div id="results" class="hidden space-y-6">
+
+                    <!-- Top Summary Card -->
+                    <div
+                        class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur relative overflow-hidden">
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none">
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                            <div>
+                                <span
+                                    class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-700">Identified
+                                    Dog Profile</span>
+                                <h3 id="resDogId" class="text-2xl font-black text-white mt-1">#MUM-000</h3>
+                            </div>
+                            <div id="resUrgencyBadge"
+                                class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border">
+                                --
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mt-6">
+                            <div class="bg-slate-900/50 p-3.5 rounded-xl border border-slate-800">
+                                <span class="text-xs text-slate-400 block mb-1">Classification Type</span>
+                                <span id="resType" class="font-semibold text-slate-200">--</span>
+                            </div>
+                            <div class="bg-slate-900/50 p-3.5 rounded-xl border border-slate-800">
+                                <span class="text-xs text-slate-400 block mb-1">Rabies / Vaccination Status</span>
+                                <span id="resVaccination" class="font-semibold text-slate-200">--</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-slate-900/50 p-3.5 rounded-xl border border-slate-800 text-sm">
+                            <span class="text-xs text-slate-400 block mb-1">Visual Biometric Match</span>
+                            <span id="resSignature" class="font-medium text-slate-200">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Action & Dispatch Card -->
+                    <div
+                        class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur space-y-4">
+                        <h4 class="text-sm font-semibold text-amber-400 uppercase tracking-wide flex items-center">
+                            <i class="fa-solid fa-bolt-lightning mr-2"></i> Action & Triage Recommendation
+                        </h4>
+
+                        <p id="resAction"
+                            class="text-sm text-slate-300 bg-slate-900/40 p-4 rounded-xl border border-slate-800 leading-relaxed">
+                            --
+                        </p>
+
+                        <div
+                            class="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800">
+                            <span id="resMedicalHistory"><i class="fa-solid fa-notes-medical mr-1 text-slate-500"></i>
+                                History: None</span>
+                            <span class="text-emerald-400 font-medium"><i class="fa-solid fa-check-circle mr-1"></i>
+                                Logged to Solana Devnet</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        function previewThumbnail(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('uploadPrompt').classList.add('hidden');
+                    const previewContainer = document.getElementById('imagePreviewContainer');
+                    previewContainer.classList.remove('hidden');
+                    document.getElementById('imagePreview').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function submitReport() {
+            const fileInput = document.getElementById('dogImage');
+            const btn = document.getElementById('submitBtn');
+            const emptyState = document.getElementById('emptyState');
+            const resultsDiv = document.getElementById('results');
+
+            if (fileInput.files.length === 0) {
+                alert('Please upload a dog photo first.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = async function () {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Analyzing Biometrics...`;
+
+                try {
+                    const response = await fetch('/api/report-dog', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ imageBase64: reader.result })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        emptyState.classList.add('hidden');
+                        resultsDiv.classList.remove('hidden');
+
+                        // Bind Data to UI elements
+                        document.getElementById('resDogId').innerText = `#${data.profile.dogId}`;
+                        document.getElementById('resType').innerText = data.profile.type;
+                        document.getElementById('resVaccination').innerText = data.profile.vaccinationStatus;
+                        document.getElementById('resSignature').innerText = data.profile.visualSignature || data.analysis.visualAnalysis?.breedOrCoat;
+                        document.getElementById('resAction').innerText = data.analysis.recommendedAction;
+                        document.getElementById('resMedicalHistory').innerHTML = `<i class="fa-solid fa-notes-medical mr-1 text-slate-500"></i> History: ${data.profile.medicalHistory || 'None recorded'}`;
+
+                        // Style Urgency Badge
+                        const urgencyBadge = document.getElementById('resUrgencyBadge');
+                        const urgency = data.analysis.urgencyLevel;
+                        urgencyBadge.innerText = `${urgency} URGENCY`;
+
+                        if (urgency === 'HIGH') {
+                            urgencyBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-red-500/10 text-red-400 border border-red-500/30";
+                        } else if (urgency === 'MEDIUM') {
+                            urgencyBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-500/10 text-amber-400 border border-amber-500/30";
+                        } else {
+                            urgencyBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
+                        }
+
+                    } else {
+                        alert('Error processing image: ' + data.error);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Failed to connect to backend server.');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Run Biometric Analysis`;
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "paw-id-care",
+  "version": "1.0.0",
+  "description": "DEV Weekend Challenge: Dog Days Edition-A comprehensive, multimodal civic-tech platform that bridges the gap between stray management, public health, pet identification, and emergency rescue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GamersStop/paw-id-care.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/GamersStop/paw-id-care/issues"
+  },
+  "homepage": "https://github.com/GamersStop/paw-id-care#readme",
+  "dependencies": {
+    "@google/genai": "^2.17.1",
+    "@solana/web3.js": "^1.98.4",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "node-fetch": "^3.3.2",
+    "snowflake-sdk": "^3.1.0"
+  }
+}
