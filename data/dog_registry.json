@@ -1,0 +1,87 @@
+[
+  {
+    "dogId": "PET-042",
+    "type": "PET",
+    "name": "Bruno",
+    "ownerName": "John Doe",
+    "ownerPhone": "+918793399509",
+    "vaccinationStatus": "🟢 Up-to-Date",
+    "healthStatus": "Healthy",
+    "lastSeen": "2026-08-14",
+    "medicalHistory": "Healed right-leg soft tissue trauma",
+    "visualSignature": "Golden Brown Labrador Retriever mix, white chest patch",
+    "credentials": {
+      "username": "owner_john",
+      "password": "securepassword"
+    }
+  },
+  {
+    "dogId": "PET-088",
+    "type": "PET",
+    "name": "Max",
+    "ownerName": "Sarah Jenkins",
+    "ownerPhone": "+918793399509",
+    "vaccinationStatus": "🟢 Up-to-Date",
+    "healthStatus": "Healthy",
+    "lastSeen": "2026-08-10",
+    "medicalHistory": "Annual Rabies vaccine overdue by 3 months",
+    "visualSignature": "Black and Tan German Shepherd mix with floppy left ear",
+    "credentials": {
+      "username": "owner_sarah",
+      "password": "securepassword"
+    },
+    "lastVaccinated": "2026-08-17"
+  },
+  {
+    "dogId": "MUM-183",
+    "type": "STRAY",
+    "name": "Bandra White Pariah",
+    "caregiverPhone": "+91123456789",
+    "vaccinationStatus": "🟢 Up-to-Date",
+    "healthStatus": "Injured",
+    "lastSeen": "2026-08-14",
+    "medicalHistory": "Limping on hind leg, soft tissue injury reported",
+    "visualSignature": "White coat, pointed ears, black spots on nose",
+    "lastVaccinated": "2026-08-17"
+  },
+  {
+    "dogId": "MUM-204",
+    "type": "STRAY",
+    "name": "Juhu Golden Mix",
+    "caregiverPhone": "+91123456789",
+    "vaccinationStatus": "🟢 Up-to-Date",
+    "healthStatus": "Healthy",
+    "lastSeen": "2026-08-16",
+    "medicalHistory": "Vaccinated during BMC Rabies Drive 2026",
+    "visualSignature": "Tan coat with dark muzzle, ear-notched left side"
+  },
+  {
+    "dogId": "STRAY-8392",
+    "type": "STRAY",
+    "name": "Community Stray (STRAY-8392)",
+    "caregiverPhone": "+91123456789",
+    "vaccinationStatus": "🟢 Up-to-Date",
+    "healthStatus": "Injured",
+    "lastSeen": "2026-08-17",
+    "medicalHistory": "Severe cachexia, extreme emaciation, advanced muscle wasting, and hindlimb weakness/inability to stand upright properly",
+    "visualSignature": "Fawn/tan coat with prominent white patch on dorsal neck and chest, dark muzzle, Indian Pariah mix",
+    "lastVaccinated": "2026-08-17"
+  },
+  {
+    "dogId": "PET-5516",
+    "type": "PET",
+    "name": "Charlie",
+    "ownerName": "Alex Rivera",
+    "ownerPhone": "+918793399509",
+    "vaccinationStatus": "🟢 Up-to-Date",
+    "healthStatus": "Healthy",
+    "lastSeen": "2026-08-17",
+    "medicalHistory": "Initial biometric profile registered",
+    "visualSignature": "Test coat signature recorded for mock pet photo",
+    "photoBase64": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAP//////////////////////////////////////////////////////////////////////////////////////wgALCAABAAEBAREA/8QAFBABAAAAAAAAAAAAAAAAAAAAAP/aAAgBAQABPxA=",
+    "credentials": {
+      "username": "owner_test_1786943442036",
+      "password": "testpassword123"
+    }
+  }
+]

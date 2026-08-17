@@ -4,244 +4,832 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PawID & Care — Intelligent Community Dog Platform</title>
+    <title>PawID & Care — Intelligent Dog ID, Triage & 112 Dispatch</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.65);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .pulse-wave {
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+            animation: pulse-wave 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+
+        @keyframes pulse-wave {
+            to {
+                box-shadow: 0 0 0 16px rgba(245, 158, 11, 0);
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
+<body
+    class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-amber-500 selection:text-slate-950">
 
-    <!-- Header Navigation -->
-    <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="bg-amber-500/10 border border-amber-500/30 p-2 rounded-xl text-amber-400">
-                    <i class="fa-solid fa-paw text-xl"></i>
+    <!-- Header Navigation Bar -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-40 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
+
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('publicScan')">
+                <div
+                    class="bg-gradient-to-tr from-amber-500 to-amber-400 p-2.5 rounded-2xl text-slate-950 shadow-lg shadow-amber-500/20 font-black">
+                    <i class="fa-solid fa-shield-dog text-2xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg tracking-tight text-white">PawID & Care</h1>
-                    <p class="text-xs text-slate-400">DogID Biometrics, RabiesShield & Emergency Dispatch</p>
+                    <h1 class="font-extrabold text-xl tracking-tight text-white flex items-center">
+                        PawID & Care <span
+                            class="ml-2 text-[10px] uppercase font-bold tracking-widest bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-md border border-amber-500/20">AI
+                            112 Triage</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Dog Biometrics, Emergency Dispatch & Herd Immunity</p>
                 </div>
             </div>
-            <div
-                class="flex items-center space-x-2 text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1.5 rounded-full font-medium">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>Google AI & ElevenLabs Connected</span>
+
+            <!-- Dynamic Role Navigation Tabs -->
+            <nav
+                class="hidden md:flex items-center space-x-1 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800">
+                <button id="navPublic" onclick="switchTab('publicScan')"
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 bg-amber-500 text-slate-950 shadow">
+                    <i class="fa-solid fa-camera-retro"></i>
+                    <span>Citizen Scan</span>
+                </button>
+
+                <button id="navOwner" onclick="switchTab('ownerDashboard')"
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <i class="fa-solid fa-paw"></i>
+                    <span>Owner Portal</span>
+                </button>
+
+                <button id="navRescuer" onclick="switchTab('rescuerDashboard')"
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <i class="fa-solid fa-truck-medical"></i>
+                    <span>Rescuer Dispatch</span>
+                </button>
+
+                <button id="navVet" onclick="switchTab('vetDashboard')"
+                    class="px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800/50">
+                    <i class="fa-solid fa-user-doctor"></i>
+                    <span>Vet & Immunity</span>
+                </button>
+            </nav>
+
+            <!-- User Status / Auth Controls -->
+            <div class="flex items-center space-x-3">
+                <div id="authLoggedOut" class="flex items-center">
+                    <button onclick="openLoginModal()"
+                        class="bg-slate-900 hover:bg-slate-800 text-amber-400 border border-amber-500/30 px-4 py-2 rounded-xl text-xs font-bold transition duration-200 flex items-center space-x-2 shadow-lg shadow-amber-500/5">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Login / Role Access</span>
+                    </button>
+                </div>
+
+                <div id="authLoggedIn" class="hidden flex items-center space-x-3">
+                    <div
+                        class="bg-slate-900/90 border border-slate-800 px-3.5 py-1.5 rounded-xl flex items-center space-x-2 text-xs">
+                        <span id="userRoleBadge"
+                            class="font-extrabold uppercase px-2 py-0.5 rounded text-[10px]">--</span>
+                        <span id="userDisplayName" class="font-bold text-white max-w-[120px] truncate">--</span>
+                    </div>
+                    <button onclick="logoutUser()"
+                        class="text-slate-400 hover:text-red-400 bg-slate-900 p-2 rounded-xl border border-slate-800 transition"
+                        title="Logout">
+                        <i class="fa-solid fa-power-off"></i>
+                    </button>
+                </div>
             </div>
+
+        </div>
+
+        <!-- Mobile Navigation Row -->
+        <div
+            class="md:hidden flex border-t border-slate-800/80 px-4 py-2 justify-around bg-slate-950 text-xs font-bold overflow-x-auto">
+            <button onclick="switchTab('publicScan')" class="px-3 py-1 text-amber-400">Scan</button>
+            <button onclick="switchTab('ownerDashboard')" class="px-3 py-1 text-slate-400">Owner</button>
+            <button onclick="switchTab('rescuerDashboard')" class="px-3 py-1 text-slate-400">Rescuer</button>
+            <button onclick="switchTab('vetDashboard')" class="px-3 py-1 text-slate-400">Vet</button>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-5xl mx-auto px-6 py-10">
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-
-            <!-- Left Column: Upload & Controls -->
-            <div class="md:col-span-1 space-y-6">
-                <div class="bg-slate-800/60 border border-slate-700/60 p-6 rounded-2xl shadow-xl backdrop-blur">
-                    <h2 class="text-base font-semibold text-white mb-4 flex items-center">
-                        <i class="fa-solid fa-camera-retro text-amber-400 mr-2"></i> Report / Scan Dog
+        <!-- ========================================== -->
+        <!-- TAB 1: PUBLIC CITIZEN SCAN & AI TRIAGE PAGE -->
+        <!-- ========================================== -->
+        <section id="tabPublicScan" class="space-y-8">
+            <!-- Hero Banner -->
+            <div
+                class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 p-8 border border-slate-800 shadow-2xl">
+                <div class="max-w-2xl relative z-10 space-y-3">
+                    <div
+                        class="inline-flex items-center space-x-2 bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1 rounded-full text-xs font-semibold">
+                        <i class="fa-solid fa-shield-virus"></i>
+                        <span>Multimodal Dog ID & 112 Emergency Dispatch</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                        Instant Biometric Dog ID & <span
+                            class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">Automated
+                            Voice Dispatch</span>
                     </h2>
+                    <p class="text-sm text-slate-300 leading-relaxed">
+                        Scan any community stray or lost pet. Gemini AI identifies the dog, triages injuries, and
+                        automatically triggers outbound voice calls to owners, rescue hotlines, or local vets.
+                    </p>
+                </div>
+            </div>
 
-                    <div class="space-y-4">
-                        <!-- Dropzone / File Input Container -->
+            <!-- Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                <!-- Left Column: Upload Box (5 cols) -->
+                <div class="lg:col-span-5 space-y-6">
+                    <div class="glass-panel p-6 rounded-3xl shadow-2xl space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-800/80 pb-4">
+                            <h3 class="text-base font-bold text-white flex items-center">
+                                <i class="fa-solid fa-camera text-amber-400 mr-2.5"></i> Dog Photo Scanner
+                            </h3>
+                            <span
+                                class="text-[11px] text-slate-400 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800">
+                                AI Vision Connected
+                            </span>
+                        </div>
+
+                        <!-- Dropzone -->
                         <div
-                            class="border-2 border-dashed border-slate-700 hover:border-amber-500/50 transition rounded-xl p-4 text-center bg-slate-900/40 relative">
+                            class="border-2 border-dashed border-slate-700/80 hover:border-amber-500/60 transition duration-300 rounded-2xl p-6 text-center bg-slate-950/40 relative group cursor-pointer">
                             <input type="file" id="dogImage" accept="image/*"
-                                class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                class="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                                 onchange="previewThumbnail(event)">
-                            <div id="uploadPrompt" class="space-y-2">
-                                <i class="fa-solid fa-cloud-arrow-up text-2xl text-slate-400"></i>
-                                <p class="text-xs text-slate-300 font-medium">Click or drag photo here</p>
-                                <p class="text-[10px] text-slate-500">Supports JPG, PNG, WEBP</p>
+                            <div id="uploadPrompt" class="space-y-3 py-4">
+                                <div
+                                    class="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 group-hover:scale-110 transition duration-300">
+                                    <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-200">Click or drag dog photo here</p>
+                                    <p class="text-xs text-slate-500 mt-1">Supports JPG, PNG, WEBP high resolution</p>
+                                </div>
                             </div>
-                            <div id="imagePreviewContainer" class="hidden">
-                                <img id="imagePreview" class="max-h-40 mx-auto rounded-lg object-cover shadow">
-                                <p class="text-xs text-amber-400 mt-2 font-medium">Change photo</p>
+                            <div id="imagePreviewContainer" class="hidden relative py-2">
+                                <img id="imagePreview"
+                                    class="max-h-56 mx-auto rounded-xl object-cover shadow-2xl border border-slate-700">
+                                <div class="mt-3 text-xs text-amber-400 font-bold flex items-center justify-center">
+                                    <i class="fa-solid fa-rotate mr-1"></i> Change Selected Photo
+                                </div>
                             </div>
                         </div>
 
+                        <!-- Location Metadata Tag -->
+                        <div
+                            class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 text-xs flex items-center justify-between">
+                            <span class="text-slate-400 flex items-center">
+                                <i class="fa-solid fa-location-dot text-amber-400 mr-2"></i> Scan Location
+                            </span>
+                            <span id="scanLocationText" class="font-semibold text-slate-200">Mumbai, Maharashtra</span>
+                        </div>
+
+                        <!-- Submit Scan Button -->
                         <button onclick="submitReport()" id="submitBtn"
-                            class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3 px-4 rounded-xl transition duration-200 shadow-lg shadow-amber-500/10 flex items-center justify-center space-x-2 text-sm">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                            <span>Run Biometric Analysis</span>
+                            class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black py-4 px-6 rounded-2xl transition duration-200 shadow-xl shadow-amber-500/10 flex items-center justify-center space-x-2 text-sm tracking-wide">
+                            <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                            <span>RUN BIOMETRIC & EMERGENCY TRIAGE</span>
+                        </button>
+                    </div>
+
+                    <!-- Innovation Info Box -->
+                    <div class="glass-panel p-5 rounded-3xl border border-slate-800 text-xs space-y-2 text-slate-400">
+                        <div class="flex items-center justify-between text-amber-400 font-bold">
+                            <span class="flex items-center"><i class="fa-solid fa-brain mr-2"></i> Gemini 3.7 Flash
+                                Engine</span>
+                            <span
+                                class="text-[10px] bg-slate-900 border border-slate-800 px-2 py-0.5 rounded">Realtime</span>
+                        </div>
+                        <p class="leading-relaxed">
+                            Maps facial & coat biometrics against registry data, automatically routing emergency
+                            dispatch calls for injured animals.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Right Column: AI Triage & Dispatch Output (7 cols) -->
+                <div class="lg:col-span-7 space-y-6">
+
+                    <!-- Initial Empty State -->
+                    <div id="emptyState"
+                        class="glass-panel rounded-3xl p-12 text-center flex flex-col items-center justify-center min-h-[460px] border border-slate-800">
+                        <div
+                            class="w-20 h-20 bg-slate-900 rounded-3xl flex items-center justify-center text-slate-600 mb-5 border border-slate-800 shadow-inner">
+                            <i class="fa-solid fa-dog text-3xl"></i>
+                        </div>
+                        <h3 class="text-slate-200 font-bold text-lg mb-2">No Active Biometric Scan</h3>
+                        <p class="text-xs text-slate-400 max-w-md leading-relaxed">
+                            Upload a photo of a stray or pet. The AI decision engine will match visual biometric
+                            records, determine injury status, and trigger interactive emergency routing.
+                        </p>
+                    </div>
+
+                    <!-- Active Triage Dashboard -->
+                    <div id="results" class="hidden space-y-6">
+
+                        <!-- Main Profile & Urgency Card -->
+                        <div
+                            class="glass-panel rounded-3xl p-7 shadow-2xl relative overflow-hidden border border-slate-800">
+                            <div
+                                class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800/80 pb-5">
+                                <div>
+                                    <div class="flex items-center space-x-2">
+                                        <span id="resCaseTag"
+                                            class="text-[10px] uppercase font-extrabold tracking-wider text-amber-400 bg-amber-500/10 px-3 py-1 rounded-md border border-amber-500/20">
+                                            Case Analysis
+                                        </span>
+                                        <span id="resDogTypeBadge"
+                                            class="text-[10px] uppercase font-extrabold text-slate-300 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-800">
+                                            --
+                                        </span>
+                                    </div>
+                                    <h3 id="resDogId" class="text-3xl font-black text-white tracking-tight mt-2">
+                                        #MUM-000</h3>
+                                    <p id="resDogName" class="text-sm font-semibold text-slate-400">--</p>
+                                </div>
+
+                                <div id="resUrgencyBadge"
+                                    class="px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider border flex items-center space-x-2">
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                    <span>--</span>
+                                </div>
+                            </div>
+
+                            <!-- Data Grid -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 text-xs">
+                                <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-1">
+                                    <span class="text-slate-400 font-semibold block">Rabies / Vaccination Status</span>
+                                    <span id="resVaccination" class="font-bold text-sm text-slate-100">--</span>
+                                </div>
+                                <div class="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-1">
+                                    <span class="text-slate-400 font-semibold block">Injury / Triage Diagnosis</span>
+                                    <span id="resInjury" class="font-bold text-sm text-amber-400">--</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-1 text-xs">
+                                <span class="text-slate-400 font-semibold block">Visual Biometric Match</span>
+                                <p id="resSignature" class="font-medium text-slate-200">--</p>
+                            </div>
+                        </div>
+
+                        <!-- Emergency Routing Decision Banner -->
+                        <div id="routingCard"
+                            class="glass-panel rounded-3xl p-6 border border-amber-500/30 bg-gradient-to-br from-amber-950/20 to-slate-900 space-y-4">
+                            <div class="flex items-center justify-between border-b border-amber-500/20 pb-3">
+                                <h4
+                                    class="text-xs font-extrabold text-amber-400 uppercase tracking-wider flex items-center">
+                                    <i class="fa-solid fa-phone-volume text-amber-400 mr-2 text-sm animate-bounce"></i>
+                                    Emergency Call & Notification Engine
+                                </h4>
+                                <span id="resCallBadge"
+                                    class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                    Active Action
+                                </span>
+                            </div>
+
+                            <div class="space-y-2">
+                                <p id="resRoutingAlert" class="text-sm font-bold text-white leading-relaxed">--</p>
+                                <p id="resRecommendedAction"
+                                    class="text-xs text-slate-300 bg-slate-950/60 p-3.5 rounded-xl border border-slate-800 leading-relaxed">
+                                    --</p>
+                            </div>
+
+                            <!-- Interactive Voice Call Trigger Button (If call active) -->
+                            <div id="callTriggerBox" class="pt-2">
+                                <button onclick="launchInteractiveCallModal()" id="openCallModalBtn"
+                                    class="w-full bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black py-3 px-4 rounded-xl transition duration-200 text-xs flex items-center justify-center space-x-2 shadow-lg shadow-red-500/20 pulse-wave">
+                                    <i class="fa-solid fa-phone-flip text-sm"></i>
+                                    <span>OPEN LIVE EMERGENCY VOICE CALL SIMULATOR</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Technical Footers (Solana & Snowflake) -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-1">
+                                <span class="text-emerald-400 font-bold flex items-center">
+                                    <i class="fa-solid fa-link mr-1.5"></i> Solana Devnet Anchor
+                                </span>
+                                <p id="resSolanaTx" class="font-mono text-[10px] text-slate-400 truncate">--</p>
+                            </div>
+                            <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-1">
+                                <span class="text-amber-400 font-bold flex items-center">
+                                    <i class="fa-solid fa-chart-pie mr-1.5"></i> Snowflake Herd Immunity Ratio
+                                </span>
+                                <p id="resHerdImmunity" class="font-semibold text-slate-200">--</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 2: PET OWNER DASHBOARD -->
+        <!-- ========================================== -->
+        <section id="tabOwnerDashboard" class="hidden space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white flex items-center">
+                        <i class="fa-solid fa-paw text-amber-400 mr-3"></i> Pet Owner Command Center
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Manage your registered pet's biometric profile, emergency
+                        contacts, and vaccination history.</p>
+                </div>
+                <div id="ownerStatusBadge"
+                    class="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3.5 py-1.5 rounded-full text-xs font-bold">
+                    Logged in as Owner
+                </div>
+            </div>
+
+            <!-- Owner Auth Lock Notice (Shown when logged out or non-owner) -->
+            <div id="ownerAuthLockNotice"
+                class="hidden bg-slate-900/50 p-8 rounded-3xl border border-slate-800 text-center space-y-4 max-w-xl mx-auto my-8">
+                <div
+                    class="w-14 h-14 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-white">Pet Owner Authentication Required</h3>
+                    <p class="text-xs text-slate-400 mt-1">Please log in as a registered Pet Owner to manage your pet's
+                        biometric profile, update emergency contact details, and view alerts.</p>
+                </div>
+                <button onclick="openLoginModal()"
+                    class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 py-2.5 rounded-xl text-xs font-bold transition inline-flex items-center space-x-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Log In as Pet Owner</span>
+                </button>
+            </div>
+
+            <!-- Owner Pet Card Content Container -->
+            <div id="ownerContentContainer" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Pet Overview (6 cols) -->
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                            <div>
+                                <span
+                                    class="text-[10px] uppercase font-extrabold text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">Registered
+                                    Pet</span>
+                                <h3 id="ownerPetName" class="text-2xl font-black text-white mt-1">Bruno</h3>
+                            </div>
+                            <span id="ownerPetId"
+                                class="text-xs font-mono font-bold bg-slate-900 text-slate-300 px-3 py-1 rounded-xl border border-slate-800">#PET-042</span>
+                        </div>
+
+                        <div id="ownerPetPhotoContainer" class="hidden rounded-2xl overflow-hidden border border-slate-800">
+                            <img id="ownerPetPhoto" class="w-full max-h-48 object-cover rounded-2xl">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-xs">
+                            <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-400 block mb-1">Vaccination Status</span>
+                                <span id="ownerPetVaccine" class="font-bold text-emerald-400">🟢 Up-to-Date</span>
+                            </div>
+                            <div class="bg-slate-950/60 p-3.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-400 block mb-1">Health Condition</span>
+                                <span id="ownerPetHealth" class="font-bold text-slate-200">Healthy</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-xs space-y-1">
+                            <span class="text-amber-400 font-semibold block flex items-center">
+                                <i class="fa-solid fa-dna mr-1.5"></i> AI Biometric Visual Signature
+                            </span>
+                            <p id="ownerPetVisualSig" class="text-slate-200">Golden Brown Labrador Retriever mix, white chest patch</p>
+                        </div>
+
+                        <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-xs space-y-1">
+                            <span class="text-slate-400 font-semibold block">Medical & Trauma History</span>
+                            <p id="ownerPetMedical" class="text-slate-200">Healed right-leg soft tissue trauma</p>
+                        </div>
+                    </div>
+
+                    <!-- Update Contact Form -->
+                    <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                        <h4 class="text-sm font-bold text-white flex items-center">
+                            <i class="fa-solid fa-phone text-amber-400 mr-2"></i> Update Emergency Outbound Contact
+                            Phone
+                        </h4>
+                        <div class="space-y-3 text-xs">
+                            <div>
+                                <label class="text-slate-400 font-semibold block mb-1">Owner Contact Phone
+                                    Number</label>
+                                <input type="text" id="ownerPhoneInput"
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-medium focus:border-amber-500 focus:outline-none"
+                                    placeholder="+91 8793399509">
+                            </div>
+                            <button onclick="updateOwnerProfile()"
+                                class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl transition text-xs">
+                                Save Contact Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Dispatch & Alert Timeline (6 cols) -->
+                <div class="lg:col-span-6 space-y-6">
+                    <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                        <h4
+                            class="text-sm font-bold text-white flex items-center justify-between border-b border-slate-800 pb-3">
+                            <span><i class="fa-solid fa-bell text-amber-400 mr-2"></i> Pet Alerts & Triage Logs</span>
+                            <span id="ownerAlertCount"
+                                class="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full font-bold">0
+                                Alerts</span>
+                        </h4>
+
+                        <div id="ownerAlertsList" class="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                            <div class="text-center py-8 text-slate-500 text-xs">
+                                No emergency triage alerts recorded for your pet yet.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 3: RESCUER EMERGENCY DISPATCH PORTAL -->
+        <!-- ========================================== -->
+        <section id="tabRescuerDashboard" class="hidden space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white flex items-center">
+                        <i class="fa-solid fa-truck-medical text-amber-400 mr-3"></i> Rescue NGO Emergency Dispatch
+                        Center
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Live feed of AI-routed emergency accident reports, trauma
+                        dispatches, and proof-of-intervention logging.</p>
+                </div>
+                <button onclick="loadRescuerDispatches()"
+                    class="bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800 px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                    <span>Refresh Dispatch Feed</span>
+                </button>
+            </div>
+
+            <!-- Dispatch Logs List -->
+            <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                    <h3 class="text-sm font-bold text-white flex items-center">
+                        <i class="fa-solid fa-list-check text-amber-400 mr-2"></i> Active Dispatch Tickets
+                    </h3>
+                    <div class="text-xs text-slate-400 flex items-center space-x-2">
+                        <span>Filter:</span>
+                        <select id="rescuerStatusFilter" onchange="filterRescuerDispatches()"
+                            class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-slate-200 text-xs focus:outline-none">
+                            <option value="ALL">All Dispatches</option>
+                            <option value="DISPATCHED">Dispatched</option>
+                            <option value="OWNER_CALLED_PENDING_CONFIRMATION">Owner Pending</option>
+                            <option value="RESOLVED">Resolved / Rescued</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="rescuerDispatchList" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Dynamic Cards -->
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================== -->
+        <!-- TAB 4: VET CLINIC & RABIES IMMUNITY PORTAL -->
+        <!-- ========================================== -->
+        <section id="tabVetDashboard" class="hidden space-y-8">
+            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-5">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white flex items-center">
+                        <i class="fa-solid fa-user-doctor text-amber-400 mr-3"></i> Veterinary Rabies & Herd Immunity
+                        Portal
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-1">Record vaccinations for community dogs, track unimmunized
+                        strays, and recalculate area immunity rates.</p>
+                </div>
+                <div
+                    class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-4 py-2 rounded-xl text-xs font-extrabold flex items-center space-x-2">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span id="vetHerdImmunityHeader">Herd Immunity: --</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- Left: Record Vaccination Form (5 cols) -->
+                <div class="lg:col-span-5 space-y-6">
+                    <!-- Vet Auth Lock Notice (Shown when not logged in as VET) -->
+                    <div id="vetAuthLockNotice"
+                        class="hidden bg-slate-900/50 p-6 rounded-3xl border border-slate-800 text-center space-y-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center mx-auto text-base">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-extrabold text-white">Vet Clinic Auth Required</h4>
+                            <p class="text-xs text-slate-400 mt-1">You must be logged in as an authorized Vet Clinic to
+                                record vaccinations and update community immunity records.</p>
+                        </div>
+                        <button onclick="openLoginModal()"
+                            class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-4 py-2 rounded-xl text-xs font-bold transition">
+                            Log In as Vet Clinic
+                        </button>
+                    </div>
+
+                    <div id="vetVaccineFormContainer"
+                        class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-5">
+                        <h3 class="text-sm font-bold text-white flex items-center border-b border-slate-800 pb-3">
+                            <i class="fa-solid fa-syringe text-amber-400 mr-2"></i> Record Administered Vaccination
+                        </h3>
+
+                        <form id="vetVaccineForm" onsubmit="submitVetVaccination(event)" class="space-y-4 text-xs">
+                            <div>
+                                <label class="text-slate-400 font-semibold block mb-1">Select Dog ID</label>
+                                <input type="text" id="vetDogId"
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-bold focus:border-amber-500 focus:outline-none"
+                                    placeholder="e.g. MUM-183 or PET-042" required>
+                            </div>
+
+                            <div>
+                                <label class="text-slate-400 font-semibold block mb-1">Vaccine Formula</label>
+                                <select id="vetVaccineType"
+                                    class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-medium focus:border-amber-500 focus:outline-none">
+                                    <option value="Rabies Anti-Viral (ARV) + DHPP">Rabies Anti-Viral (ARV) + DHPP 6-in-1
+                                    </option>
+                                    <option value="Rabies Anti-Viral Single Dose">Rabies Anti-Viral Single Dose</option>
+                                    <option value="DHPP Core Booster">DHPP Core Booster</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-slate-400 font-semibold block mb-1">Batch Number</label>
+                                    <input type="text" id="vetBatchNo"
+                                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono"
+                                        placeholder="RAB-2026-X9">
+                                </div>
+                                <div>
+                                    <label class="text-slate-400 font-semibold block mb-1">Next Due Date</label>
+                                    <input type="date" id="vetDueDate"
+                                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white">
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-slate-950 font-black py-3 rounded-xl transition text-xs shadow-lg shadow-emerald-500/10">
+                                LOG VACCINATION & RECALCULATE HERD IMMUNITY
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right: Unimmunized Stray Radar & Log (7 cols) -->
+                <div class="lg:col-span-7 space-y-6">
+                    <div class="glass-panel p-6 rounded-3xl border border-slate-800 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <h3 class="text-sm font-bold text-white flex items-center">
+                                <i class="fa-solid fa-radar text-amber-400 mr-2"></i> Unimmunized Stray Radar List
+                            </h3>
+                            <span id="unimmunizedCount"
+                                class="text-[10px] bg-red-500/10 text-red-400 border border-red-500/20 px-2.5 py-0.5 rounded-full font-bold">0
+                                Pending</span>
+                        </div>
+
+                        <div id="vetStrayList" class="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+                            <!-- Dynamic items -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- ========================================== -->
+    <!-- MODAL 1: AUTH LOGIN & ROLE SELECTOR MODAL -->
+    <!-- ========================================== -->
+    <div id="loginModal"
+        class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="glass-panel rounded-3xl max-w-md w-full p-7 border border-slate-800 shadow-2xl space-y-6 relative">
+            <button onclick="closeLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Auth Mode Switcher Tabs -->
+            <div class="flex items-center justify-center p-1 bg-slate-950 border border-slate-800 rounded-2xl text-xs font-bold">
+                <button id="authTabSignIn" onclick="switchAuthMode('login')"
+                    class="w-1/2 py-2 rounded-xl text-amber-400 bg-slate-900 border border-slate-800 shadow transition">
+                    Sign In
+                </button>
+                <button id="authTabRegister" onclick="switchAuthMode('register')"
+                    class="w-1/2 py-2 rounded-xl text-slate-400 hover:text-white transition">
+                    Register Pet Owner
+                </button>
+            </div>
+
+            <!-- LOGIN FORM CONTAINER -->
+            <div id="loginFormContainer" class="space-y-6">
+                <div class="text-center space-y-2">
+                    <div
+                        class="w-12 h-12 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-2xl flex items-center justify-center mx-auto text-xl font-bold">
+                        <i class="fa-solid fa-user-lock"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-white">Unified RBAC Login</h3>
+                    <p class="text-xs text-slate-400">Authenticates credentials against Dog Registry, Rescuer NGOs, or Vet Clinics.</p>
+                </div>
+
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs">
+                    <div>
+                        <label class="text-slate-400 font-semibold block mb-1">Username</label>
+                        <input type="text" id="loginUsername"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-medium focus:border-amber-500 focus:outline-none"
+                            placeholder="Enter username..." required>
+                    </div>
+                    <div>
+                        <label class="text-slate-400 font-semibold block mb-1">Password</label>
+                        <input type="password" id="loginPassword"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white font-medium focus:border-amber-500 focus:outline-none"
+                            placeholder="Enter password..." required>
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-3 rounded-xl transition text-xs shadow-lg shadow-amber-500/10">
+                        SIGN IN TO DASHBOARD
+                    </button>
+                </form>
+
+                <!-- Quick Demo Auto-Fill Shortcuts -->
+                <div class="border-t border-slate-800/80 pt-4 space-y-2">
+                    <p class="text-[11px] font-semibold text-slate-400 text-center">Quick Demo Credentials:</p>
+                    <div class="grid grid-cols-3 gap-2 text-[10px] font-bold">
+                        <button onclick="fillDemoLogin('owner_john', 'securepassword')"
+                            class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2 rounded-xl text-amber-400 truncate">
+                            👤 Owner
+                        </button>
+                        <button onclick="fillDemoLogin('rescue_admin', 'securepassword')"
+                            class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2 rounded-xl text-amber-400 truncate">
+                            🚑 Rescuer
+                        </button>
+                        <button onclick="fillDemoLogin('vet_admin', 'securepassword')"
+                            class="bg-slate-900 hover:bg-slate-800 border border-slate-800 p-2 rounded-xl text-amber-400 truncate">
+                            🩺 Vet
                         </button>
                     </div>
                 </div>
-
-                <!-- Info Card -->
-                <div
-                    class="bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20 p-5 rounded-2xl text-xs space-y-2 text-slate-300">
-                    <p class="font-semibold text-amber-400 flex items-center"><i
-                            class="fa-solid fa-circle-info mr-1.5"></i> Hackathon Innovation</p>
-                    <p>Instantly maps individual street dogs, evaluates public health herd-immunity percentages, and
-                        coordinates local veterinary dispatch.</p>
-                </div>
             </div>
 
-            <!-- Right Column: Analysis Results Dashboard -->
-            <div class="md:col-span-2 space-y-6">
-
-                <!-- Initial Empty State -->
-                <div id="emptyState"
-                    class="bg-slate-800/40 border border-slate-800 rounded-2xl p-12 text-center flex flex-col items-center justify-center h-full min-h-[360px]">
-                    <div class="bg-slate-800 p-4 rounded-full text-slate-500 mb-4 text-xl shadow-inner">
-                        <i class="fa-solid fa-dog"></i>
-                    </div>
-                    <h3 class="text-slate-300 font-medium mb-1">No scan results yet</h3>
-                    <p class="text-xs text-slate-500 max-w-xs">Upload a photograph of a community dog or pet to trigger
-                        multimodal AI feature recognition and ID registry cross-referencing.</p>
+            <!-- REGISTER OWNER FORM CONTAINER -->
+            <div id="registerFormContainer" class="hidden space-y-4">
+                <div class="text-center space-y-1">
+                    <h3 class="text-lg font-extrabold text-white">Pet Owner Registration</h3>
+                    <p class="text-xs text-slate-400">Upload your pet's photo to generate an AI biometric PawID.</p>
                 </div>
 
-                <!-- Active Results Dashboard (Hidden by Default) -->
-                <div id="results" class="hidden space-y-6">
-
-                    <!-- Top Summary Card -->
-                    <div
-                        class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur relative overflow-hidden">
-                        <div
-                            class="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 rounded-bl-full pointer-events-none">
+                <form id="registerForm" onsubmit="handleRegistrationSubmit(event)" class="space-y-3 text-xs">
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="text-slate-400 font-semibold block mb-1">Username *</label>
+                            <input type="text" id="regUsername"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-amber-500 focus:outline-none"
+                                placeholder="owner_alex" required>
                         </div>
-
-                        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
-                            <div>
-                                <span
-                                    class="text-[10px] uppercase tracking-wider font-bold text-slate-400 bg-slate-900 px-2.5 py-1 rounded-md border border-slate-700">Identified
-                                    Dog Profile</span>
-                                <h3 id="resDogId" class="text-2xl font-black text-white mt-1">#MUM-000</h3>
-                            </div>
-                            <div id="resUrgencyBadge"
-                                class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide border">
-                                --
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm mt-6">
-                            <div class="bg-slate-900/50 p-3.5 rounded-xl border border-slate-800">
-                                <span class="text-xs text-slate-400 block mb-1">Classification Type</span>
-                                <span id="resType" class="font-semibold text-slate-200">--</span>
-                            </div>
-                            <div class="bg-slate-900/50 p-3.5 rounded-xl border border-slate-800">
-                                <span class="text-xs text-slate-400 block mb-1">Rabies / Vaccination Status</span>
-                                <span id="resVaccination" class="font-semibold text-slate-200">--</span>
-                            </div>
-                        </div>
-
-                        <div class="mt-4 bg-slate-900/50 p-3.5 rounded-xl border border-slate-800 text-sm">
-                            <span class="text-xs text-slate-400 block mb-1">Visual Biometric Match</span>
-                            <span id="resSignature" class="font-medium text-slate-200">--</span>
+                        <div>
+                            <label class="text-slate-400 font-semibold block mb-1">Password *</label>
+                            <input type="password" id="regPassword"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-amber-500 focus:outline-none"
+                                placeholder="••••••••" required>
                         </div>
                     </div>
 
-                    <!-- Action & Dispatch Card -->
-                    <div
-                        class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 shadow-xl backdrop-blur space-y-4">
-                        <h4 class="text-sm font-semibold text-amber-400 uppercase tracking-wide flex items-center">
-                            <i class="fa-solid fa-bolt-lightning mr-2"></i> Action & Triage Recommendation
-                        </h4>
-
-                        <p id="resAction"
-                            class="text-sm text-slate-300 bg-slate-900/40 p-4 rounded-xl border border-slate-800 leading-relaxed">
-                            --
-                        </p>
-
-                        <div
-                            class="pt-2 flex items-center justify-between text-xs text-slate-400 border-t border-slate-800">
-                            <span id="resMedicalHistory"><i class="fa-solid fa-notes-medical mr-1 text-slate-500"></i>
-                                History: None</span>
-                            <span class="text-emerald-400 font-medium"><i class="fa-solid fa-check-circle mr-1"></i>
-                                Logged to Solana Devnet</span>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="text-slate-400 font-semibold block mb-1">Owner Name *</label>
+                            <input type="text" id="regOwnerName"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-amber-500 focus:outline-none"
+                                placeholder="Alex Rivera" required>
+                        </div>
+                        <div>
+                            <label class="text-slate-400 font-semibold block mb-1">Phone Number *</label>
+                            <input type="text" id="regOwnerPhone"
+                                class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-medium focus:border-amber-500 focus:outline-none"
+                                placeholder="+918793399509" required>
                         </div>
                     </div>
 
-                </div>
+                    <div>
+                        <label class="text-slate-400 font-semibold block mb-1">Pet Name *</label>
+                        <input type="text" id="regPetName"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-bold focus:border-amber-500 focus:outline-none"
+                            placeholder="e.g. Buddy" required>
+                    </div>
 
+                    <div>
+                        <label class="text-slate-400 font-semibold block mb-1">Pet Photo (For Biometric PawID) *</label>
+                        <input type="file" id="regPetImage" accept="image/*" onchange="previewRegThumbnail(event)"
+                            class="w-full text-slate-300 text-xs bg-slate-950 border border-slate-800 rounded-xl p-2 cursor-pointer focus:outline-none"
+                            required>
+                        <div id="regImagePreviewContainer" class="hidden mt-2 text-center">
+                            <img id="regImagePreview" class="max-h-24 mx-auto rounded-xl object-cover border border-amber-500/40 shadow-lg">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="regSubmitBtn"
+                        class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black py-3 rounded-xl transition text-xs shadow-lg shadow-amber-500/10 flex items-center justify-center">
+                        <i class="fa-solid fa-id-card mr-1.5"></i> REGISTER & GENERATE PAWID
+                    </button>
+                </form>
             </div>
-
         </div>
-    </main>
+    </div>
 
-    <script>
-        function previewThumbnail(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById('uploadPrompt').classList.add('hidden');
-                    const previewContainer = document.getElementById('imagePreviewContainer');
-                    previewContainer.classList.remove('hidden');
-                    document.getElementById('imagePreview').src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
 
-        async function submitReport() {
-            const fileInput = document.getElementById('dogImage');
-            const btn = document.getElementById('submitBtn');
-            const emptyState = document.getElementById('emptyState');
-            const resultsDiv = document.getElementById('results');
+    <!-- ======================================================== -->
+    <!-- MODAL 2: INTERACTIVE OUTBOUND VOICE CALL SIMULATOR MODAL -->
+    <!-- ======================================================== -->
+    <div id="callModal"
+        class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div
+            class="glass-panel rounded-3xl max-w-lg w-full p-8 border border-amber-500/40 shadow-2xl space-y-6 text-center relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-amber-950/30">
 
-            if (fileInput.files.length === 0) {
-                alert('Please upload a dog photo first.');
-                return;
-            }
+            <div
+                class="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-amber-500 via-red-500 to-amber-500 animate-pulse">
+            </div>
 
-            const file = fileInput.files[0];
-            const reader = new FileReader();
+            <div class="space-y-3">
+                <div
+                    class="w-16 h-16 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-full flex items-center justify-center mx-auto text-2xl pulse-wave">
+                    <i class="fa-solid fa-phone-volume animate-bounce"></i>
+                </div>
+                <div>
+                    <span id="callStatusBadge"
+                        class="text-[10px] uppercase font-extrabold tracking-widest text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                        OUTBOUND VOICE CALL ACTIVE
+                    </span>
+                    <h3 id="callTargetName" class="text-xl font-black text-white mt-2">Calling Pet Owner...</h3>
+                    <p id="callTargetPhone" class="text-xs font-mono text-amber-400">+91 8793399509</p>
+                </div>
+            </div>
 
-            reader.onloadend = async function () {
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Analyzing Biometrics...`;
+            <!-- Waveform Animation -->
+            <div class="flex items-center justify-center space-x-1.5 py-3">
+                <div class="w-1.5 h-6 bg-amber-400 rounded-full animate-pulse"></div>
+                <div class="w-1.5 h-10 bg-amber-400 rounded-full animate-pulse delay-75"></div>
+                <div class="w-1.5 h-14 bg-amber-400 rounded-full animate-pulse delay-150"></div>
+                <div class="w-1.5 h-8 bg-amber-400 rounded-full animate-pulse delay-100"></div>
+                <div class="w-1.5 h-5 bg-amber-400 rounded-full animate-pulse"></div>
+            </div>
 
-                try {
-                    const response = await fetch('/api/report-dog', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ imageBase64: reader.result })
-                    });
+            <!-- Call Transcript Audio Container -->
+            <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 text-xs text-left space-y-2">
+                <span class="text-slate-400 font-bold block text-[10px] uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-waveform mr-1.5 text-amber-400"></i> AI Interactive Voice Transcript
+                </span>
+                <p id="callTranscriptText" class="text-slate-200 leading-relaxed font-medium">--</p>
+            </div>
 
-                    const data = await response.json();
-                    if (data.success) {
-                        emptyState.classList.add('hidden');
-                        resultsDiv.classList.remove('hidden');
+            <!-- Interactive Cascade Confirmation Buttons -->
+            <div id="callActionContainer" class="space-y-3 pt-2">
+                <button onclick="confirmRescueCascade(true)" id="confirmRescueBtn"
+                    class="w-full bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-black py-3 px-4 rounded-xl transition text-xs shadow-lg flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-truck-medical"></i>
+                    <span>CONFIRM & DISPATCH RESCUE TEAM TO NGO</span>
+                </button>
+                <button onclick="confirmRescueCascade(false)"
+                    class="w-full bg-slate-900 hover:bg-slate-800 text-slate-300 font-semibold py-2.5 rounded-xl border border-slate-800 text-xs transition">
+                    I will transport independently / End Call
+                </button>
+            </div>
+        </div>
+    </div>
 
-                        // Bind Data to UI elements
-                        document.getElementById('resDogId').innerText = `#${data.profile.dogId}`;
-                        document.getElementById('resType').innerText = data.profile.type;
-                        document.getElementById('resVaccination').innerText = data.profile.vaccinationStatus;
-                        document.getElementById('resSignature').innerText = data.profile.visualSignature || data.analysis.visualAnalysis?.breedOrCoat;
-                        document.getElementById('resAction').innerText = data.analysis.recommendedAction;
-                        document.getElementById('resMedicalHistory').innerHTML = `<i class="fa-solid fa-notes-medical mr-1 text-slate-500"></i> History: ${data.profile.medicalHistory || 'None recorded'}`;
 
-                        // Style Urgency Badge
-                        const urgencyBadge = document.getElementById('resUrgencyBadge');
-                        const urgency = data.analysis.urgencyLevel;
-                        urgencyBadge.innerText = `${urgency} URGENCY`;
-
-                        if (urgency === 'HIGH') {
-                            urgencyBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-red-500/10 text-red-400 border border-red-500/30";
-                        } else if (urgency === 'MEDIUM') {
-                            urgencyBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-amber-500/10 text-amber-400 border border-amber-500/30";
-                        } else {
-                            urgencyBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide bg-emerald-500/10 text-emerald-400 border border-emerald-500/30";
-                        }
-
-                    } else {
-                        alert('Error processing image: ' + data.error);
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('Failed to connect to backend server.');
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Run Biometric Analysis`;
-                }
-            };
-
-            reader.readAsDataURL(file);
-        }
-    </script>
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT APP APPLICATION LOGIC -->
+    <!-- ========================================== -->
+    <script src="script.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,26 @@
+[
+    {
+        "vetId": "VET-001",
+        "name": "Green Park Animal Clinic",
+        "leadVet": "Dr. Vikram Mehta",
+        "phone": "+91123456789",
+        "clinicAddress": "Plot 12, Link Road, Bandra West, Mumbai",
+        "licenseNumber": "VET-MH-2024-8891",
+        "credentials": {
+            "username": "vet_admin",
+            "password": "securepassword"
+        }
+    },
+    {
+        "vetId": "VET-002",
+        "name": "Paws & Claws Care Centre",
+        "leadVet": "Dr. Meera Patel",
+        "phone": "+91123456789",
+        "clinicAddress": "Shop 4, Sunrise Heights, Juhu, Mumbai",
+        "licenseNumber": "VET-MH-2025-1042",
+        "credentials": {
+            "username": "vet_meera",
+            "password": "securepassword"
+        }
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        "rescuerId": "RES-001",
+        "name": "Mumbai Rapid Rescue NGO",
+        "contactPerson": "Officer Rahul Sharma",
+        "phone": "+91123456789",
+        "zone": "Bandra & Western Suburbs",
+        "status": "ACTIVE_HOTLINE",
+        "credentials": {
+            "username": "rescue_admin",
+            "password": "securepassword"
+        }
+    },
+    {
+        "rescuerId": "RES-002",
+        "name": "South Mumbai Animal Patrol",
+        "contactPerson": "Dr. Anita Desai",
+        "phone": "+91123456789",
+        "zone": "Colaba & Fort",
+        "status": "ACTIVE_HOTLINE",
+        "credentials": {
+            "username": "rescue_south",
+            "password": "securepassword"
+        }
+    }
+]
